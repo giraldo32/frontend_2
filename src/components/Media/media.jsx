@@ -8,36 +8,34 @@ const Media = () => {
   const [titulo, setTitulo] = useState('');
   const [sinopsis, setSinopsis] = useState('');
   const [url, setUrl] = useState('');
-  const [imagen, setImagen] = useState('');
   const [anioEstreno, setAnioEstreno] = useState('');
   const [editId, setEditId] = useState(null);
-  
+  const [loading, setLoading] = useState(false);
+
   const cargarEjemplo = async () => {
     try {
-      await MediaService.createMedia({ titulo: 'Inception', sinopsis: 'Un ladrón que roba secretos a través de sueños.', url: 'https://ejemplo.com/inception', imagen: 'https://ejemplo.com/inception.jpg', anioEstreno: 2010 });
-      await MediaService.createMedia({ titulo: 'El Rey León', sinopsis: 'Un león joven debe reclamar su trono.', url: 'https://ejemplo.com/rey-leon', imagen: 'https://ejemplo.com/rey-leon.jpg', anioEstreno: 1994 });
+      setLoading(true);
+      await MediaService.createMedia({ titulo: 'Inception', sinopsis: 'Un ladrón que roba secretos a través de sueños.', url: 'https://ejemplo.com/inception', anioEstreno: 2010 });
+      await MediaService.createMedia({ titulo: 'El Rey León', sinopsis: 'Un león joven debe reclamar su trono.', url: 'https://ejemplo.com/rey-leon', anioEstreno: 1994 });
       fetchMedia();
       Swal.fire('Datos de ejemplo cargados', '', 'success');
     } catch {
       Swal.fire('Error', 'No se pudieron cargar los datos de ejemplo', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
-const Media = () => {
-  const [media, setMedia] = useState([]);
-  const [titulo, setTitulo] = useState('');
-  const [sinopsis, setSinopsis] = useState('');
-  const [url, setUrl] = useState('');
-  const [imagen, setImagen] = useState('');
-  const [anioEstreno, setAnioEstreno] = useState('');
-  const [editId, setEditId] = useState(null);
-
   const fetchMedia = async () => {
     try {
+      setLoading(true);
       const data = await MediaService.getMedia();
       setMedia(data);
     } catch (error) {
-      Swal.fire('Error', 'No se pudo cargar la media', 'error');
+      console.error('Error fetching media:', error);
+      Swal.fire('Error', 'No se pudo cargar la media. Verifica la consola para más detalles.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,104 +45,122 @@ const Media = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!titulo || !url || !anioEstreno) {
+      Swal.fire('Error', 'Por favor completa todos los campos obligatorios.', 'warning');
+      return;
+    }
+
+    if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(url)) {
+      Swal.fire('Error', 'Por favor ingresa una URL válida para la imagen.', 'warning');
+      return;
+    }
+
+    const newMedia = {
+      titulo,
+      sinopsis,
+      url,
+      anioEstreno: parseInt(anioEstreno, 10),
+    };
+
     try {
+      setLoading(true);
       if (editId) {
-        await MediaService.updateMedia(editId, { titulo, sinopsis, url, imagen, anioEstreno });
-        Swal.fire('Actualizado', 'Media actualizada correctamente', 'success');
+        await MediaService.updateMedia(editId, newMedia);
+        Swal.fire('Éxito', 'Media actualizada correctamente.', 'success');
       } else {
-        await MediaService.createMedia({ titulo, sinopsis, url, imagen, anioEstreno });
-        Swal.fire('Creado', 'Media creada correctamente', 'success');
+        await MediaService.createMedia(newMedia);
+        Swal.fire('Éxito', 'Media creada correctamente.', 'success');
       }
-      setTitulo(''); setSinopsis(''); setUrl(''); setImagen(''); setAnioEstreno(''); setEditId(null);
+      setTitulo('');
+      setSinopsis('');
+      setUrl('');
+      setAnioEstreno('');
+      setEditId(null);
       fetchMedia();
-    } catch {
-      Swal.fire('Error', 'No se pudo guardar la media', 'error');
+    } catch (error) {
+      console.error('Error al guardar la media:', error);
+      Swal.fire('Error', 'Hubo un error al guardar la media. Por favor, intenta nuevamente.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEdit = (m) => {
-    setTitulo(m.titulo);
-    setSinopsis(m.sinopsis);
-    setUrl(m.url);
-    setImagen(m.imagen);
-    setAnioEstreno(m.anioEstreno);
+    setTitulo(m.titulo || '');
+    setSinopsis(m.sinopsis || '');
+    setUrl(m.url || '');
+    setAnioEstreno(m.anioEstreno || '');
     setEditId(m._id);
   };
 
   const handleDelete = async (id) => {
     if (await Swal.fire({ title: '¿Eliminar?', text: 'No se puede deshacer', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí, eliminar' }).then(r => r.isConfirmed)) {
       try {
+        setLoading(true);
         await MediaService.deleteMedia(id);
         Swal.fire('Eliminado', 'Media eliminada', 'success');
         fetchMedia();
       } catch {
         Swal.fire('Error', 'No se pudo eliminar', 'error');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Media (Películas y Series)</h2>
-      <form className="mb-3" onSubmit={handleSubmit}>
-        <div className="row g-2 align-items-center">
-          <div className="col-auto">
+      <h2 className="text-center mb-4">Media (Películas y Series)</h2>
+      {loading && <div className="alert alert-info text-center">Cargando...</div>}
+      <form className="mb-4" onSubmit={handleSubmit}>
+        <div className="row g-3 justify-content-center">
+          {/* Inputs for movie details */}
+          <div className="col-md-3">
             <input type="text" className="form-control" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required />
           </div>
-          <div className="col-auto">
+          <div className="col-md-3">
             <input type="text" className="form-control" placeholder="Sinopsis" value={sinopsis} onChange={e => setSinopsis(e.target.value)} />
           </div>
-          <div className="col-auto">
-            <input type="text" className="form-control" placeholder="URL" value={url} onChange={e => setUrl(e.target.value)} />
+          <div className="col-md-3">
+            <input type="text" className="form-control" placeholder="URL (JPG)" value={url} onChange={e => setUrl(e.target.value)} />
           </div>
-          <div className="col-auto">
-            <input type="text" className="form-control" placeholder="Imagen" value={imagen} onChange={e => setImagen(e.target.value)} />
-          </div>
-          <div className="col-auto">
+          <div className="col-md-2">
             <input type="number" className="form-control" placeholder="Año Estreno" value={anioEstreno} onChange={e => setAnioEstreno(e.target.value)} />
           </div>
-          <div className="col-auto">
-            <button className="btn btn-primary" type="submit">{editId ? 'Actualizar' : 'Agregar'}</button>
-            {editId && <button className="btn btn-secondary ms-2" type="button" onClick={() => { setEditId(null); setTitulo(''); setSinopsis(''); setUrl(''); setImagen(''); setAnioEstreno(''); }}>Cancelar</button>}
+          <div className="col-md-2 text-center">
+            <button className="btn btn-primary w-100" type="submit">{editId ? 'Actualizar' : 'Agregar'}</button>
+            {editId && <button className="btn btn-secondary w-100 mt-2" type="button" onClick={() => { setEditId(null); setTitulo(''); setSinopsis(''); setUrl(''); setAnioEstreno(''); }}>Cancelar</button>}
           </div>
         </div>
       </form>
       {media.length === 0 ? (
         <div className="alert alert-info text-center">
           No hay media registrada.<br />
-          <button className="btn btn-outline-primary mt-2" onClick={cargarEjemplo}>Cargar datos de ejemplo</button>
+          <button className="btn btn-outline-primary mt-3" onClick={cargarEjemplo}>Cargar datos de ejemplo</button>
         </div>
       ) : (
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Sinopsis</th>
-              <th>URL</th>
-              <th>Imagen</th>
-              <th>Año Estreno</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {media.map(m => (
-              <tr key={m._id}>
-                <td>{m.titulo}</td>
-                <td>{m.sinopsis}</td>
-                <td>{m.url}</td>
-                <td>{m.imagen}</td>
-                <td>{m.anioEstreno}</td>
-                <td>
-                  <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(m)}>Editar</button>
+        <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+          {media.map(m => (
+            <div className="col" key={m._id}>
+              <div className="card h-100 shadow-sm">
+                <img src={m.url} className="card-img-top" alt={m.titulo} style={{ objectFit: 'cover', height: '200px' }} />
+                <div className="card-body text-center">
+                  <h5 className="card-title text-primary">{m.titulo}</h5>
+                  <p className="card-text text-muted">{m.sinopsis}</p>
+                  <p className="card-text"><small className="text-muted">Año: {m.anioEstreno}</small></p>
+                </div>
+                <div className="card-footer d-flex justify-content-between">
+                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(m)}>Editar</button>
                   <button className="btn btn-danger btn-sm" onClick={() => handleDelete(m._id)}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
 };
-}
+
 export default Media;

@@ -6,6 +6,7 @@ const getMedia = async () => {
 };
 
 const createMedia = async (data) => {
+  console.log('Datos enviados al backend:', data); // Log the data being sent
   const response = await axiosConfig.post('media', data);
   return response.data;
 };
