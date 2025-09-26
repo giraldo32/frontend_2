@@ -24,18 +24,17 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '20px',
+        borderRadius: '10px',
+        textAlign: 'center',
+        margin: '20px 0',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+      }}>
+        <h1 style={{ margin: '0 0 10px 0', fontSize: '2.5em' }}>🎬 Bienvenido a la Plataforma de Películas iu digital 🎬</h1>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
       <div>
         <h1>Películas</h1>
         {data ? (

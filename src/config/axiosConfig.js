@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosConfig = axios.create({
-    baseURL: 'http://localhost:3000/'
+    baseURL: '/api/'  // Esto usará el proxy definido en vite.config.js
 })
 
 // Interceptor para manejar errores

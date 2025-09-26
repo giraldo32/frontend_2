@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Dashboard = () => (
   <div className="text-center mt-5">
-    <h1 className="mb-4">Bienvenido a la Plataforma de Películas Ude@</h1>
+    <h1 className="mb-4">Bienvenido a la Plataforma de Películas iu digital</h1>
     <p className="lead mb-4">Administra géneros, directores, productoras, tipos y media (películas y series) de forma sencilla.</p>
     <div className="d-flex justify-content-center gap-3 flex-wrap">
       <Link to="/media" className="btn btn-primary btn-lg">Media</Link>
