@@ -33,9 +33,9 @@ function App() {
         margin: '20px 0',
         boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
       }}>
-        <h1 style={{ margin: '0 0 10px 0', fontSize: '2.5em' }}>🎬 Bienvenido a la Plataforma de Películas iu digital 🎬</h1>
+        <h1 style={{ margin: '0 0 10px 0', fontSize: '2.5em' }}>🎬 Bienvenido a la Plataforma de Películas IU DIGITAL 🎬</h1>
       </div>
-      <div>
+      <div>ñ
         <h1>Películas</h1>
         {data ? (
           <ul>

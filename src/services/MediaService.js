@@ -6,7 +6,21 @@ const getMedia = async () => {
 };
 
 const createMedia = async (data) => {
-  console.log('Datos enviados al backend:', data); // Log the data being sent
+  console.log('📤 MediaService - Datos que se van a enviar:');
+  console.log('- Objeto completo:', data);
+  console.log('- nombre:', data.nombre);
+  console.log('- url:', data.url);
+  console.log('- Keys disponibles:', Object.keys(data));
+  console.log('- JSON final:', JSON.stringify(data, null, 2));
+  
+  // Verificar que los campos no estén vacíos
+  if (!data.nombre) {
+    throw new Error('El campo nombre está vacío');
+  }
+  if (!data.url) {
+    throw new Error('El campo url está vacío');
+  }
+  
   const response = await axiosConfig.post('media', data);
   return response.data;
 };
