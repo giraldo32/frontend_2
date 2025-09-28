@@ -92,14 +92,6 @@ const Media = () => {
       anioEstreno: parseInt(anioEstreno, 10) || new Date().getFullYear() // ✅ OBLIGATORIO (con valor por defecto)
     };
 
-    console.log('� VALORES DEL ESTADO ANTES DE CREAR mediaData:');
-    console.log('- titulo:', titulo, '(type:', typeof titulo, ')');
-    console.log('- sinopsis:', sinopsis, '(type:', typeof sinopsis, ')');
-    console.log('- url:', url, '(type:', typeof url, ')');
-    console.log('- anioEstreno:', anioEstreno, '(type:', typeof anioEstreno, ')');
-    
-    console.log('�📤 DATOS ENVIADOS AL BACKEND:');
-    console.log(JSON.stringify(mediaData, null, 2));
 
     try {
       setLoading(true);
@@ -120,15 +112,6 @@ const Media = () => {
     } catch (error) {
       console.error('Error al guardar la media:', error);
       
-      // Debug: Mostrar detalles completos del error
-      console.log('Detalles del error:');
-      console.log('- Error completo:', error);
-      console.log('- Datos enviados:', mediaData);
-      if (error.response) {
-        console.log('- Status:', error.response.status);
-        console.log('- Respuesta del servidor:', error.response.data);
-        console.log('- Headers:', error.response.headers);
-      }
       
       let errorMessage = 'Hubo un error al guardar la media.';
       
