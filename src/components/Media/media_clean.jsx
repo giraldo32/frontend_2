@@ -55,21 +55,19 @@ const Media = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar TODOS los campos obligatorios según el backend REAL
+    // Validar campos obligatorios
     if (!titulo || !url) {
       Swal.fire('Error', 'Por favor completa los campos obligatorios: Título y URL.', 'warning');
       return;
     }
-    
-    // Los campos sinopsis y anioEstreno son obligatorios pero tendrán valores por defecto si están vacíos
 
-    // Validación de URL más flexible - acepta URLs válidas o vacías
-    if (url && !/^https?:\/\/.+/i.test(url)) {
-      Swal.fire('Error', 'Por favor ingresa una URL válida (debe comenzar con http:// o https://).', 'warning');
+    // Validación de URL
+    if (!/^https?:\/\/.+/.test(url)) {
+      Swal.fire('Error', 'Por favor ingresa una URL válida para la imagen.', 'warning');
       return;
     }
 
-    // Verificar si ya existe una película con el mismo nombre (solo al crear, no al editar)
+    // Verificar duplicados (solo al crear)
     if (!editId) {
       const existeNombre = media.find(m => m.nombre && m.nombre.toLowerCase() === titulo.toLowerCase());
       if (existeNombre) {
@@ -84,22 +82,15 @@ const Media = () => {
       }
     }
 
-    // Estructura exacta según el modelo REAL del backend
+    // Estructura exacta según el modelo del backend
     const mediaData = {
-      nombre: titulo.trim(),                              // ✅ OBLIGATORIO 
-      url: url.trim(),                                   // ✅ OBLIGATORIO
-      sinopsis: sinopsis.trim() || 'Sin sinopsis',      // ✅ OBLIGATORIO (con valor por defecto)
-      anioEstreno: parseInt(anioEstreno, 10) || new Date().getFullYear() // ✅ OBLIGATORIO (con valor por defecto)
+      nombre: titulo.trim(),
+      url: url.trim(),
+      sinopsis: sinopsis.trim() || 'Sin sinopsis',
+      anioEstreno: parseInt(anioEstreno, 10) || new Date().getFullYear()
     };
 
-    console.log('� VALORES DEL ESTADO ANTES DE CREAR mediaData:');
-    console.log('- titulo:', titulo, '(type:', typeof titulo, ')');
-    console.log('- sinopsis:', sinopsis, '(type:', typeof sinopsis, ')');
-    console.log('- url:', url, '(type:', typeof url, ')');
-    console.log('- anioEstreno:', anioEstreno, '(type:', typeof anioEstreno, ')');
-    
-    console.log('�📤 DATOS ENVIADOS AL BACKEND:');
-    console.log(JSON.stringify(mediaData, null, 2));
+    console.log('Datos que se envían al backend:', mediaData);
 
     try {
       setLoading(true);
@@ -110,7 +101,8 @@ const Media = () => {
         await MediaService.createMedia(mediaData);
         Swal.fire('Éxito', 'Media creada correctamente.', 'success');
       }
-      // Refrescar la lista y limpiar el formulario
+      
+      // Limpiar formulario y recargar datos
       fetchMedia();
       setTitulo('');
       setSinopsis('');
@@ -120,35 +112,19 @@ const Media = () => {
     } catch (error) {
       console.error('Error al guardar la media:', error);
       
-      // Debug: Mostrar detalles completos del error
-      console.log('Detalles del error:');
-      console.log('- Error completo:', error);
-      console.log('- Datos enviados:', mediaData);
-      if (error.response) {
-        console.log('- Status:', error.response.status);
-        console.log('- Respuesta del servidor:', error.response.data);
-        console.log('- Headers:', error.response.headers);
-      }
-      
       let errorMessage = 'Hubo un error al guardar la media.';
       
       if (error.response) {
-        // El servidor respondió con un código de error
         if (error.response.status === 500) {
-          // Manejar diferentes tipos de errores del servidor
-          const serverData = error.response.data;
-          
-          if (serverData && serverData.msj) {
-            // El servidor responde con {msj: 'Error en el servidor'}
-            errorMessage = `Error del servidor: ${serverData.msj}. Revisa los logs del backend para más detalles.`;
-          } else if (serverData && serverData.message) {
-            errorMessage = `Error del servidor: ${serverData.message}`;
-          } else if (serverData && serverData.error) {
-            // Podría ser un error de duplicado de MongoDB
-            if (serverData.error.includes('duplicate') || serverData.error.includes('E11000')) {
+          if (error.response.data && error.response.data.msj) {
+            errorMessage = `Error del servidor: ${error.response.data.msj}. Revisa los logs del backend para más detalles.`;
+          } else if (error.response.data && error.response.data.message) {
+            errorMessage = `Error del servidor: ${error.response.data.message}`;
+          } else if (error.response.data && error.response.data.error) {
+            if (error.response.data.error.includes('duplicate') || error.response.data.error.includes('E11000')) {
               errorMessage = 'Ya existe una película/serie con ese nombre o URL. Por favor usa valores únicos.';
             } else {
-              errorMessage = `Error del servidor: ${serverData.error}`;
+              errorMessage = `Error del servidor: ${error.response.data.error}`;
             }
           } else {
             errorMessage = 'Error interno del servidor. Verifica los logs del backend.';
@@ -159,7 +135,6 @@ const Media = () => {
           errorMessage = `Error del servidor: ${error.response.data.message}`;
         }
       } else if (error.request) {
-        // La petición fue enviada pero no se recibió respuesta
         errorMessage = 'No se pudo conectar con el servidor. Verifica que esté corriendo en el puerto 3000.';
       }
       
@@ -175,7 +150,7 @@ const Media = () => {
   };
 
   const handleEdit = (m) => {
-    setTitulo(m.nombre || m.titulo || ''); // Maneja tanto 'nombre' como 'titulo' por compatibilidad
+    setTitulo(m.nombre || m.titulo || '');
     setSinopsis(m.sinopsis || '');
     setUrl(m.url || '');
     setAnioEstreno(m.anioEstreno || '');
@@ -183,7 +158,13 @@ const Media = () => {
   };
 
   const handleDelete = async (id) => {
-    if (await Swal.fire({ title: '¿Eliminar?', text: 'No se puede deshacer', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí, eliminar' }).then(r => r.isConfirmed)) {
+    if (await Swal.fire({ 
+      title: '¿Eliminar?', 
+      text: 'No se puede deshacer', 
+      icon: 'warning', 
+      showCancelButton: true, 
+      confirmButtonText: 'Sí, eliminar' 
+    }).then(r => r.isConfirmed)) {
       try {
         setLoading(true);
         await MediaService.deleteMedia(id);
@@ -201,61 +182,108 @@ const Media = () => {
     <div className="container mt-4">
       <h2 className="text-center mb-4">Media (Películas y Series)</h2>
       {loading && <div className="alert alert-info text-center">Cargando...</div>}
+      
       <form className="mb-4" onSubmit={handleSubmit}>
         <div className="row g-3 justify-content-center">
-          {/* Inputs for movie details */}
           <div className="col-md-3">
-            <input type="text" className="form-control" placeholder="Título *" value={titulo} onChange={e => setTitulo(e.target.value)} required />
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Título *" 
+              value={titulo} 
+              onChange={e => setTitulo(e.target.value)} 
+              required 
+            />
           </div>
           <div className="col-md-3">
-            <input type="text" className="form-control" placeholder="Sinopsis (opcional)" value={sinopsis} onChange={e => setSinopsis(e.target.value)} />
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Sinopsis (opcional)" 
+              value={sinopsis} 
+              onChange={e => setSinopsis(e.target.value)} 
+            />
           </div>
           <div className="col-md-3">
-            <input type="text" className="form-control" placeholder="URL * (https://...)" value={url} onChange={e => setUrl(e.target.value)} required />
-            <input type="url" className="form-control" placeholder="URL de imagen (opcional)" value={url} onChange={e => setUrl(e.target.value)} />
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="URL * (https://...)" 
+              value={url} 
+              onChange={e => setUrl(e.target.value)} 
+              required 
+            />
           </div>
           <div className="col-md-2">
-            <input type="number" className="form-control" placeholder="Año (opcional)" value={anioEstreno} onChange={e => setAnioEstreno(e.target.value)} />
+            <input 
+              type="number" 
+              className="form-control" 
+              placeholder="Año (opcional)" 
+              value={anioEstreno} 
+              onChange={e => setAnioEstreno(e.target.value)} 
+            />
           </div>
           <div className="col-md-2 text-center">
-            <button className="btn btn-primary w-100" type="submit">{editId ? 'Actualizar' : 'Agregar'}</button>
-            {editId && <button className="btn btn-secondary w-100 mt-2" type="button" onClick={() => { setEditId(null); setTitulo(''); setSinopsis(''); setUrl(''); setAnioEstreno(''); }}>Cancelar</button>}
+            <button className="btn btn-primary w-100" type="submit">
+              {editId ? 'Actualizar' : 'Agregar'}
+            </button>
+            {editId && (
+              <button 
+                className="btn btn-secondary w-100 mt-2" 
+                type="button" 
+                onClick={() => { 
+                  setEditId(null); 
+                  setTitulo(''); 
+                  setSinopsis(''); 
+                  setUrl(''); 
+                  setAnioEstreno(''); 
+                }}
+              >
+                Cancelar
+              </button>
+            )}
           </div>
         </div>
       </form>
+      
       {media.length === 0 ? (
         <div className="alert alert-info text-center">
           No hay media registrada.<br />
-          <button className="btn btn-outline-primary mt-3" onClick={cargarEjemplo}>Cargar datos de ejemplo</button>
+          <button className="btn btn-outline-primary mt-3" onClick={cargarEjemplo}>
+            Cargar datos de ejemplo
+          </button>
         </div>
       ) : (
         <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
           {media.map(m => (
             <div className="col" key={m._id}>
               <div className="card h-100 shadow-sm">
-                {m.url ? (
-                  <img 
-                    src={m.url} 
-                    className="card-img-top" 
-                    alt={m.nombre || m.titulo} 
-                    style={{ objectFit: 'cover', height: '200px' }}
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-                    }}
-                  />
-                ) : (
-                  <div className="card-img-top d-flex align-items-center justify-content-center bg-light" style={{ height: '200px' }}>
-                    <span className="text-muted">🎬 Sin imagen</span>
-                  </div>
-                )}
+                <img 
+                  src={m.url} 
+                  className="card-img-top" 
+                  alt={m.nombre || m.titulo} 
+                  style={{ objectFit: 'cover', height: '200px' }} 
+                />
                 <div className="card-body text-center">
                   <h5 className="card-title text-primary">{m.nombre || m.titulo}</h5>
                   <p className="card-text text-muted">{m.sinopsis}</p>
-                  <p className="card-text"><small className="text-muted">Año: {m.anioEstreno}</small></p>
+                  <p className="card-text">
+                    <small className="text-muted">Año: {m.anioEstreno}</small>
+                  </p>
                 </div>
                 <div className="card-footer d-flex justify-content-between">
-                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(m)}>Editar</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(m._id)}>Eliminar</button>
+                  <button 
+                    className="btn btn-warning btn-sm" 
+                    onClick={() => handleEdit(m)}
+                  >
+                    Editar
+                  </button>
+                  <button 
+                    className="btn btn-danger btn-sm" 
+                    onClick={() => handleDelete(m._id)}
+                  >
+                    Eliminar
+                  </button>
                 </div>
               </div>
             </div>
@@ -267,4 +295,3 @@ const Media = () => {
 };
 
 export default Media;
-// FIN DEL CÓDIGO
