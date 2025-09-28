@@ -63,9 +63,9 @@ const Media = () => {
     
     // Los campos sinopsis y anioEstreno son obligatorios pero tendrán valores por defecto si están vacíos
 
-    // Validación más flexible de URL - solo verificar que sea una URL válida
-    if (!/^https?:\/\/.+/.test(url)) {
-      Swal.fire('Error', 'Por favor ingresa una URL válida para la imagen.', 'warning');
+    // Validación de URL más flexible - acepta URLs válidas o vacías
+    if (url && !/^https?:\/\/.+/i.test(url)) {
+      Swal.fire('Error', 'Por favor ingresa una URL válida (debe comenzar con http:// o https://).', 'warning');
       return;
     }
 
@@ -212,6 +212,7 @@ const Media = () => {
           </div>
           <div className="col-md-3">
             <input type="text" className="form-control" placeholder="URL * (https://...)" value={url} onChange={e => setUrl(e.target.value)} required />
+            <input type="url" className="form-control" placeholder="URL de imagen (opcional)" value={url} onChange={e => setUrl(e.target.value)} />
           </div>
           <div className="col-md-2">
             <input type="number" className="form-control" placeholder="Año (opcional)" value={anioEstreno} onChange={e => setAnioEstreno(e.target.value)} />
@@ -232,7 +233,21 @@ const Media = () => {
           {media.map(m => (
             <div className="col" key={m._id}>
               <div className="card h-100 shadow-sm">
-                <img src={m.url} className="card-img-top" alt={m.nombre || m.titulo} style={{ objectFit: 'cover', height: '200px' }} />
+                {m.url ? (
+                  <img 
+                    src={m.url} 
+                    className="card-img-top" 
+                    alt={m.nombre || m.titulo} 
+                    style={{ objectFit: 'cover', height: '200px' }}
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
+                    }}
+                  />
+                ) : (
+                  <div className="card-img-top d-flex align-items-center justify-content-center bg-light" style={{ height: '200px' }}>
+                    <span className="text-muted">🎬 Sin imagen</span>
+                  </div>
+                )}
                 <div className="card-body text-center">
                   <h5 className="card-title text-primary">{m.nombre || m.titulo}</h5>
                   <p className="card-text text-muted">{m.sinopsis}</p>
@@ -252,3 +267,4 @@ const Media = () => {
 };
 
 export default Media;
+// FIN DEL CÓDIGO
