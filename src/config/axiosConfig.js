@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosConfig = axios.create({
-   // baseURL: '/api/'  // Esto usará el proxy definido en vite.config.js
+  // baseURL: '/api/'  // Esto usará el proxy definido en vite.config.js
   baseURL: "https://peliculas-back-y-front-tarea-2.onrender.com"
 
   })

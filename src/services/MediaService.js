@@ -21,11 +21,24 @@ const deleteMedia = async (id) => {
   return response.data;
 };
 
+const getMediaByTipo = async (tipoId) => {
+  try {
+    const response = await axiosConfig.get('media', {
+      params: { tipo: tipoId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener media por tipo ID ${tipoId}:`, error);
+    throw error;
+  }
+};
+
 const MediaService = {
   getMedia,
   createMedia,
   updateMedia,
   deleteMedia,
+  getMediaByTipo
 };
 
 export default MediaService;

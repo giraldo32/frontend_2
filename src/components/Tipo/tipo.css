@@ -1,0 +1,116 @@
+.tipo-header {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tipo-card {
+  border: none;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tipo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tipo-form {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  border-left: 4px solid #0d6efd;
+  transition: all 0.3s ease;
+}
+
+.tipo-form:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tipo-table {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+  border-left: 4px solid #0d6efd;
+  transition: all 0.3s ease;
+}
+
+.tipo-table:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tipo-table th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+}
+
+.tipo-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.tipo-table tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tipo-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  color: #0d6efd;
+  margin-bottom: 1rem;
+}
+
+.tipo-icon {
+  height: 40px;
+  width: 40px;
+  background-color: rgba(13, 110, 253, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d6efd;
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

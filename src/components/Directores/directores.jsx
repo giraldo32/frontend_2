@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import DirectoresService from '../../services/DirectoresService';
 import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import './directores.css';
 
 const Directores = () => {
   const [directores, setDirectores] = useState([]);
@@ -72,42 +74,109 @@ const Directores = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">Directores</h2>
-      <form className="mb-4" onSubmit={handleSubmit}>
-        <div className="row g-3 justify-content-center">
-          <div className="col-md-4">
-            <input type="text" className="form-control" placeholder="Nombre" value={nombre} onChange={e => setNombre(e.target.value)} required />
-          </div>
-          <div className="col-md-2">
-            <select className="form-select" value={estado} onChange={e => setEstado(e.target.value)}>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-            </select>
-          </div>
-          <div className="col-md-2 text-center">
-            <button className="btn btn-primary w-100" type="submit">{editId ? 'Actualizar' : 'Agregar'}</button>
-            {editId && <button className="btn btn-secondary w-100 mt-2" type="button" onClick={() => { setEditId(null); setNombre(''); setEstado('Activo'); }}>Cancelar</button>}
-          </div>
+    <div className="container py-4">
+      <div className="directores-header text-center fade-in">
+        <h1 className="display-5 fw-bold">Directores de Cine</h1>
+        <p className="lead">Gestiona información sobre los directores de tus películas favoritas</p>
+        <span className="director-count">{directores.length} directores registrados</span>
+      </div>
+      
+      <div className="card director-form fade-in">
+        <div className="card-body">
+          <h4 className="card-title mb-4">
+            <i className="bi bi-person-video3 me-2"></i>
+            {editId ? 'Editar Director' : 'Nuevo Director'}
+          </h4>
+          <form onSubmit={handleSubmit}>
+            <div className="row g-3 align-items-end">
+              <div className="col-md-7">
+                <div className="form-floating mb-3">
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    id="nombreDirector" 
+                    placeholder="Nombre completo" 
+                    value={nombre} 
+                    onChange={e => setNombre(e.target.value)} 
+                    required 
+                  />
+                  <label htmlFor="nombreDirector">Nombre completo</label>
+                </div>
+              </div>
+              <div className="col-md-3">
+                <div className="form-floating">
+                  <select 
+                    className="form-select" 
+                    id="estadoDirector" 
+                    value={estado} 
+                    onChange={e => setEstado(e.target.value)}
+                  >
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                  <label htmlFor="estadoDirector">Estado</label>
+                </div>
+              </div>
+              <div className="col-md-2">
+                <div className="d-grid gap-2">
+                  <button className="btn btn-primary btn-icon" type="submit">
+                    <i className="bi bi-check-circle"></i> {editId ? 'Actualizar' : 'Guardar'}
+                  </button>
+                  {editId && (
+                    <button 
+                      className="btn btn-outline-secondary btn-icon" 
+                      type="button" 
+                      onClick={() => { setEditId(null); setNombre(''); setEstado('Activo'); }}
+                    >
+                      <i className="bi bi-x-circle"></i> Cancelar
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
+      
       {directores.length === 0 ? (
-        <div className="alert alert-info text-center">
-          No hay directores registrados.<br />
-          <button className="btn btn-outline-primary mt-3" onClick={cargarEjemplo}>Cargar datos de ejemplo</button>
+        <div className="empty-state mt-4 fade-in">
+          <i className="bi bi-person-video3 empty-state-icon"></i>
+          <h3>No hay directores registrados</h3>
+          <p className="text-muted">Agrega directores para organizar mejor tu catálogo de películas</p>
+          <button className="btn btn-primary btn-lg mt-3 btn-icon" onClick={cargarEjemplo}>
+            <i className="bi bi-cloud-download"></i> Cargar datos de ejemplo
+          </button>
         </div>
       ) : (
-        <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        <div className="row row-cols-1 row-cols-md-3 g-4 mt-4">
           {directores.map(director => (
-            <div className="col" key={director._id}>
-              <div className="card h-100 shadow-sm">
+            <div className="col fade-in" key={director._id}>
+              <div className="card h-100 director-card">
                 <div className="card-body text-center">
-                  <h5 className="card-title text-primary">{director.nombre}</h5>
-                  <p className="card-text"><small className="text-muted">Estado: {director.estado}</small></p>
-                </div>
-                <div className="card-footer d-flex justify-content-between">
-                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(director)}>Editar</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(director._id)}>Eliminar</button>
+                  <div className="director-avatar">
+                    <i className="bi bi-person-fill"></i>
+                  </div>
+                  <h4 className="director-name">{director.nombres}</h4>
+                  <p className="mb-3">
+                    <span className={`director-status ${director.estado === 'Activo' ? 'status-active' : 'status-inactive'}`}>
+                      <i className={`bi bi-${director.estado === 'Activo' ? 'check-circle-fill' : 'x-circle-fill'}`}></i>
+                      {director.estado}
+                    </span>
+                  </p>
+                  <div className="director-action-buttons">
+                    <button 
+                      className="btn btn-outline-primary btn-sm btn-icon flex-grow-1" 
+                      onClick={() => handleEdit(director)}
+                    >
+                      <i className="bi bi-pencil"></i> Editar
+                    </button>
+                    <button 
+                      className="btn btn-outline-danger btn-sm btn-icon flex-grow-1" 
+                      onClick={() => handleDelete(director._id)}
+                    >
+                      <i className="bi bi-trash"></i> Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

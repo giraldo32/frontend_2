@@ -1,0 +1,74 @@
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06) !important;
+  border-left: 4px solid #0d6efd;
+}
+
+.icon-container {
+  height: 80px;
+  width: 80px;
+  margin: 0 auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(13, 110, 253, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.hover-card:hover .icon-container {
+  transform: scale(1.1);
+}
+
+/* Color variations for different sections */
+.hover-card:nth-child(1) .icon-container {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.hover-card:nth-child(2) .icon-container {
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
+.hover-card:nth-child(3) .icon-container {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.hover-card:nth-child(4) .icon-container {
+  background-color: rgba(253, 126, 20, 0.1);
+}
+
+.hover-card:nth-child(5) .icon-container {
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.row .col:nth-child(1) .card {
+  animation-delay: 0.1s;
+}
+
+.row .col:nth-child(2) .card {
+  animation-delay: 0.2s;
+}
+
+.row .col:nth-child(3) .card {
+  animation-delay: 0.3s;
+}

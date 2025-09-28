@@ -1,11 +1,11 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  
+  color-scheme: light;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f8f9fa;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,17 +15,15 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #0d6efd;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #0a58ca;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -36,33 +34,73 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease-in-out;
 }
 button:hover {
-  border-color: #646cff;
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid rgba(13, 110, 253, 0.5);
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* Scroll bar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Custom animations for the entire app */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+/* Bordes azules para componentes */
+.blue-border-card {
+  border-left: 4px solid #0d6efd;
+  transition: all 0.3s ease;
+}
+
+.blue-border-card:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto de elevación para componentes */
+.elevation-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.elevation-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06) !important;
 }
