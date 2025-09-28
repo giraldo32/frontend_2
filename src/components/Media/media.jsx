@@ -212,7 +212,6 @@ const Media = () => {
           </div>
           <div className="col-md-3">
             <input type="text" className="form-control" placeholder="URL * (https://...)" value={url} onChange={e => setUrl(e.target.value)} required />
-            <input type="url" className="form-control" placeholder="URL de imagen (opcional)" value={url} onChange={e => setUrl(e.target.value)} />
           </div>
           <div className="col-md-2">
             <input type="number" className="form-control" placeholder="Año (opcional)" value={anioEstreno} onChange={e => setAnioEstreno(e.target.value)} />
